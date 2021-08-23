@@ -1,0 +1,17 @@
+.popup__confirm {
+  padding: 0;
+  min-height: 50px;
+  background-color: #fff;
+  font-size: 18px;
+  line-height: 1.21;
+  border: 1px solid #000;
+  border-radius: 2px;
+  opacity: .2;
+}
+
+@media screen and (max-width: 767.5px) {
+  .popup__confirm {
+    min-height: 46px;
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,19 @@
+
+@media screen and (max-width: 589.5px) {
+  .elements {
+    max-width: 282px;
+  }
+}
+
+@media screen and (min-width: 590px) {
+  .elements {
+    max-width: 582px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+
+  .elements {
+    max-width: 880px;
+  }
+}

@@ -1,0 +1,10 @@
+.popup__confirm_active {
+  background-color: #000;
+  color: #fff;
+  opacity: 1;
+}
+
+.popup__confirm_active:hover {
+  opacity: .8;
+  cursor: pointer;
+}

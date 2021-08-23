@@ -1,0 +1,37 @@
+.profile__avatar {
+  height: 120px;
+  width: 120px;
+  border-radius: 50%;
+  background-image: url(../../../images/profile/Avatar.jpg);
+  background-size: cover;
+  background-position: center;
+}
+
+.profile__avatar:hover::after {
+  opacity: .8;
+}
+
+.profile__avatar::after{
+  content: " ";
+  height: 120px;
+  width: 120px;
+  opacity: 0;
+  display: block;
+  background-color: #000;
+  background-image: url(../../../images/profile/profile-editor.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 26px;
+  cursor: pointer;
+}
+
+@media screen and (min-width: 768px) {
+  .profile__avatar {
+    margin-right: 30px;
+  }
+}
+@media screen and (max-width: 767.5px) {
+  .profile__avatar {
+    margin: 0 0 26px 0;
+  }
+}

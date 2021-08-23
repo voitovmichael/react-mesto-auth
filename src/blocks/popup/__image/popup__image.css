@@ -1,0 +1,7 @@
+.popup__image {
+  padding: 0;
+  max-width: 75vw;
+  max-height: 75vh;
+  width: auto;
+  border-radius: 0;
+}

@@ -1,0 +1,8 @@
+.element__delete {
+  display: flex;
+  position: absolute;
+  width: 100%;
+  height: 19.3px;
+  justify-content: flex-end;
+  visibility: hidden;
+}

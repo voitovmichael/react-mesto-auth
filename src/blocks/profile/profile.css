@@ -1,0 +1,31 @@
+.profile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+@media screen and (max-width: 424.5px) {
+  .profile {
+    width: 88.1%;
+  }
+}
+
+@media screen and (min-width: 424.6px) {
+  .profile {
+    width: 78%;
+  }
+}
+
+@media screen and (min-width: 768px){
+  .profile {
+    width: 85%;
+    justify-content: space-between;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .profile {
+    width: 880px;
+  }
+}

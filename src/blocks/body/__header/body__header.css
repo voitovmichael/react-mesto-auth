@@ -1,0 +1,9 @@
+.body__header {
+    margin: 45px auto 40px;
+}
+
+@media screen and (max-width: 767.5px) {
+  .body__header {
+    margin: 28px auto 42px;
+  }
+}

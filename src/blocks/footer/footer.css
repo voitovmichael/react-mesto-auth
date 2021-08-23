@@ -1,0 +1,28 @@
+.footer {
+  font-size: 18px;
+  line-height: 1.21;
+  font-weight: 400;
+  font-style: normal;
+  color: rgb(84,84,84,1);
+}
+
+@media screen and (max-width: 767.5px) {
+  .footer {
+    width: 100%;
+    padding: 0 19px 0;
+    box-sizing: border-box;
+    font-size: 14px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .footer {
+    width: 85%;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .footer {
+    width: 880px;
+  }
+}

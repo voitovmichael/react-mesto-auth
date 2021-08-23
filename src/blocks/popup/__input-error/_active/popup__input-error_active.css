@@ -1,0 +1,11 @@
+.popup__input-error_active {
+  font-family: 'Inter';
+  font-size: 12px;
+  line-height: 1.25;
+  font-style: normal;
+  font-weight: normal;
+  color: #ff0000;
+  display: inline;
+  margin-bottom: 30px;
+  margin-top: 5px;
+}
