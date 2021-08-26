@@ -13,7 +13,6 @@ export default function Main (props) {
         />
      )
     });
-    debugger;
     return (
       <main className="main">
         <section className="profile main__profile">

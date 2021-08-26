@@ -1,4 +1,5 @@
 import React from 'react';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import Header from './Header.js';
 import Main from './Main.js';
 import Footer from './Footer.js';
@@ -8,6 +9,10 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext.js'
 import EditProfilePopup from './EditProfilePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js';
 import AddPlacePopup from './AddPlacePopup.js';
+import Login from './Login.js';
+import InfoTooltip from './InfoTooltip.js';
+import Register from './Register.js';
+import ProtectedRoute from './ProtectedRoute.js';
 
 function App (props) {
 
@@ -17,6 +22,8 @@ function App (props) {
   const [currentUser, setCurrentUser] = React.useState({});
   const [selectedCard, setSelectedCard] = React.useState(null);
   const [cards, setCards] = React.useState([]);
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [actionObj, setActionObj] = React.useState({action: 'Регистрация', link: '/sign-up'})
   const _ESC_CODE = 27;
 
   const handleEditAvatarClick = () => {
@@ -39,6 +46,13 @@ function App (props) {
   //метод логирования ошибок
   const reject = (err) => {
     console.log(err);
+  }
+
+  // обработчик смены действия
+  const handleClickLink = () => {
+    const action = actionObj.action === 'Регистрация' ? 'Войти' : 'Регистрация';
+    const link = actionObj.link === '/sign-up' ? '/sign-in' : '/sign-up';
+   setActionObj({action, link});
   }
 
   // обработчик нажатия ESC
@@ -139,23 +153,38 @@ function App (props) {
 
   return (
     <div className="App">
-      <Header/>
+      <Header action={actionObj.action} onClickLink={handleClickLink} link={actionObj.link} />
       <CurrentUserContext.Provider value={currentUser}>
-        <Main 
-          onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddPlaceClick}
-          onEditAvatar={handleEditAvatarClick}
-          onCardClick={handleCardClick}
-          cards={cards}
-          onCardLike={handleCardLike}
-          onCardDelete={handleCardDelete}
-          on
-        />
+      <Switch>
+        <Route path="/sign-in">
+          <Login title="Вход" submitTitle="Войти" placeholders={['Email', 'Пароль']}/>
+        </Route>
+        <Route path="/sign-up">
+          <Register title="Регистрация" submitTitle="Зарегистрироваться" placeholders={['Email', 'Пароль']}/>
+        </Route>
+        <ProtectedRoute 
+            loggedIn={loggedIn}
+            path='/'
+            redirectPath='/sign-in'
+            component={Main}
+            onEditProfile={handleEditProfileClick}
+            onAddPlace={handleAddPlaceClick}
+            onEditAvatar={handleEditAvatarClick}
+            onCardClick={handleCardClick}
+            cards={cards}
+            onCardLike={handleCardLike}
+            onCardDelete={handleCardDelete}> 
+        </ProtectedRoute>
         <Footer/>
-        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeOverlay} onUpdateUser={handleUpdateUser}/>
-        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeOverlay} onAddPlace={handleAddPlace}/>
-        <ImagePopup card={selectedCard} onClose={closeOverlay} />
-        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeOverlay} onUpdateAvatar={handleUpdateAvatar} />
+          <InfoTooltip />
+          <Route path='/editprofile'>
+            <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeOverlay} onUpdateUser={handleUpdateUser}/>
+          </Route>
+          
+          <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeOverlay} onAddPlace={handleAddPlace}/>
+          <ImagePopup card={selectedCard} onClose={closeOverlay} />
+          <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeOverlay} onUpdateAvatar={handleUpdateAvatar} />
+      </Switch>
       </CurrentUserContext.Provider>
     </div>
   );
