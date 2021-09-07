@@ -1,0 +1,9 @@
+.auth-form-container {
+  width: 358px;
+}
+
+@media (max-width: 399.5px) {
+  .auth-form-container {
+    width: 260px;
+  }
+}

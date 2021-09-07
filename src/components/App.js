@@ -1,10 +1,11 @@
 import React from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route, useHistory } from 'react-router-dom';
 import Header from './Header.js';
 import Main from './Main.js';
 import Footer from './Footer.js';
 import ImagePopup from './ImagePopup.js';
 import api from '../utils/api.js';
+import auth from '../utils/authorization.js';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js'
 import EditProfilePopup from './EditProfilePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js';
@@ -13,6 +14,9 @@ import Login from './Login.js';
 import InfoTooltip from './InfoTooltip.js';
 import Register from './Register.js';
 import ProtectedRoute from './ProtectedRoute.js';
+import logoFail from '../images/InfoTooltip/Fail.svg';
+import logoSuccess from '../images/InfoTooltip/Success.svg';
+
 
 function App (props) {
 
@@ -23,7 +27,8 @@ function App (props) {
   const [selectedCard, setSelectedCard] = React.useState(null);
   const [cards, setCards] = React.useState([]);
   const [loggedIn, setLoggedIn] = React.useState(false);
-  const [actionObj, setActionObj] = React.useState({action: 'Регистрация', link: '/sign-up'})
+  const [succsessObj, setSuccessObj] = React.useState({image: null, caption: null});
+  const history = useHistory();
   const _ESC_CODE = 27;
 
   const handleEditAvatarClick = () => {
@@ -45,16 +50,41 @@ function App (props) {
   }
   //метод логирования ошибок
   const reject = (err) => {
+    
     console.log(err);
   }
-
-  // обработчик смены действия
-  const handleClickLink = () => {
-    const action = actionObj.action === 'Регистрация' ? 'Войти' : 'Регистрация';
-    const link = actionObj.link === '/sign-up' ? '/sign-in' : '/sign-up';
-   setActionObj({action, link});
+  const handleAuth = (message, result) => {
+    debugger;
+    let caption;
+    if(result['error'] !== undefined) { caption = result['error'] } 
+    if(result['message'] !== undefined) { caption = result['message'] }
+      if(caption !== undefined) {
+        setSuccessObj({image: logoFail, caption});
+      } else {
+        setLoggedIn(true);
+        history.push('/'); 
+        setSuccessObj({image: logoSuccess, caption: message});
+      }
+    // .catch(reject);
   }
-
+  /**
+   * handleSignUp - метод отправки запроса для регистрации
+   * @param {{email, password}} data 
+   */
+  const handleSignUp = (data) => {
+    auth.signUp(data)
+    .then(handleAuth.bind(this, 'Вы успешно зарегистрировались!'))
+    .catch(reject);
+  } 
+  /**
+   * handleSignUp - метод отправки запроса для авторизации
+   */
+  const handleSignIn = (data) => {
+    auth.signIn(data)
+    // auth.checkUser({jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTM3M2JhYTg3Yzg3YjAwMWFiMzEzOGMiLCJpYXQiOjE2MzEwMjU5NjZ9.1M51wt5MYfg53RQE9Nx1g9hGotAPoNEnCi3szricZTM'})
+    .then(handleAuth.bind(this, 'Вы успешно авторизовались!'))
+    .catch(reject);
+  }
   // обработчик нажатия ESC
   React.useEffect(() => {
     const clickEscape = (evt) => {
@@ -72,34 +102,37 @@ function App (props) {
       setCards(cardsList);
     })
     .catch(reject)
-  //   api.getUserInfo()
-  //   .then((response) => {
-  //     setCurrentUser(response)
-  //   });
-  //   //Добавляем запрос на добавление карточек
-  //   api.getCards()
-  //  .then((cardsList) => {
-  //    setCards(cardsList)
-  //  })
-
     return () => {
       document.removeEventListener('keyup', clickEscape);
     }
   }, []);
-
+  /**
+   * обработчик закрытия InfoTooltip
+   */
+  const closeInfoTooltip = () => {
+    if(loggedIn) { history.push('/') }
+    setSuccessObj({image: null, caption: null});
+  }
   // обработчик закрытия Overlay
   const closeOverlay = (evt) => {
-    if(evt.target.classList.contains('popup') || evt.target.classList.contains('popup__close-button')) {
+    debugger
+    if(evt.target.parentElement.classList.contains('popup_image-tooltip')) {
+      closeInfoTooltip();
+    }
+    else if(evt.target.classList.contains('popup') || evt.target.classList.contains('popup__close-button')) {
       closeAllPopups();
     }
   }
-
   // закрытие всех popup-ов
   const closeAllPopups = () => {
     setEditAvatarPopupOpen(false);
     setEditProfilePopupOpen(false);
     setAddPlacePopupOpen(false);
     setSelectedCard(null);
+    // setSuccessObj({image: null, caption: null});
+    // closeInfoTooltip();
+    // closeInfoTooltip();
+    
   }
 
   //объявляем обновление данных по пользователю
@@ -149,23 +182,28 @@ function App (props) {
    })
    .catch(reject);
  }
-
-
   return (
     <div className="App">
-      <Header action={actionObj.action} onClickLink={handleClickLink} link={actionObj.link} />
+      <Header/>
       <CurrentUserContext.Provider value={currentUser}>
       <Switch>
-        <Route path="/sign-in">
-          <Login title="Вход" submitTitle="Войти" placeholders={['Email', 'Пароль']}/>
-        </Route>
-        <Route path="/sign-up">
-          <Register title="Регистрация" submitTitle="Зарегистрироваться" placeholders={['Email', 'Пароль']}/>
-        </Route>
-        <ProtectedRoute 
+      
+      <Route path="/sign-up">
+        <Register title="Регистрация" submitTitle="Зарегистрироваться" placeholders={['Email', 'Пароль']} 
+        onSignedUp={handleSignUp}
+        />
+        <InfoTooltip succsessObj={succsessObj} onClose={closeOverlay} />
+      </Route>
+      <Route path="/sign-in">
+        <Login title="Вход" submitTitle="Войти" placeholders={['Email', 'Пароль']}
+          onSignedIn={handleSignIn}
+        />
+        <InfoTooltip succsessObj={succsessObj} onClose={closeOverlay} />
+      </Route>
+
+      <ProtectedRoute
             loggedIn={loggedIn}
-            path='/'
-            redirectPath='/sign-in'
+            path="/"
             component={Main}
             onEditProfile={handleEditProfileClick}
             onAddPlace={handleAddPlaceClick}
@@ -175,16 +213,14 @@ function App (props) {
             onCardLike={handleCardLike}
             onCardDelete={handleCardDelete}> 
         </ProtectedRoute>
+      
         <Footer/>
-          <InfoTooltip />
-          <Route path='/editprofile'>
-            <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeOverlay} onUpdateUser={handleUpdateUser}/>
-          </Route>
-          
+
+      </Switch>
+      <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeOverlay} onUpdateUser={handleUpdateUser}/>
           <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeOverlay} onAddPlace={handleAddPlace}/>
           <ImagePopup card={selectedCard} onClose={closeOverlay} />
           <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeOverlay} onUpdateAvatar={handleUpdateAvatar} />
-      </Switch>
       </CurrentUserContext.Provider>
     </div>
   );

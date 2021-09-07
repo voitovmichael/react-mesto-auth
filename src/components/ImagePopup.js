@@ -1,6 +1,7 @@
 function ImagePopup (props) {
-  return (
-    <section className={`popup popup_type_image ${props.isTooltip && 'popup_image-tooltip'} ${props.card && 'popup_opened'}`} onClick={props.onClose}>
+    return (
+    <section className={`popup popup_type_image ${props.isTooltip && 'popup_image-tooltip'} ${props.card && 'popup_opened'}`} 
+      onClick={props.onClose}>
     <button className="popup__close-button" type="reset" aria-label="Close"></button>
     <figure className={`popup__container popup__figure ${props.isTooltip && 'tooltip'}`}>
       <img className={`popup__image ${props.isTooltip && 'tooltip__img'}`} src={props.card && props.card.link} 
