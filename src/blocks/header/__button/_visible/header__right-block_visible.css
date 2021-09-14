@@ -1,0 +1,8 @@
+.header__right-block_visible {
+  flex-direction: column;
+  justify-self: center;
+  background: none;
+  width: max-content;
+  height: max-content;
+  margin-right: 0;
+}

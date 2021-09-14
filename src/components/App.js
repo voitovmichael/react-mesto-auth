@@ -28,6 +28,7 @@ function App (props) {
   const [cards, setCards] = React.useState([]);
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [succsessObj, setSuccessObj] = React.useState({image: null, caption: null});
+  const [currentLogin, setCurrentLogin] = React.useState(null);
   const history = useHistory();
   const _ESC_CODE = 27;
 
@@ -53,40 +54,71 @@ function App (props) {
     
     console.log(err);
   }
-  const handleAuth = (message, result) => {
-    debugger;
-    let caption;
+  const handleAuth = (result) => {
+    let caption, 
+      email = result.data && result.data.email ? result.data.email : null;
+    let token = result.token ? result.token : null;
     if(result['error'] !== undefined) { caption = result['error'] } 
     if(result['message'] !== undefined) { caption = result['message'] }
       if(caption !== undefined) {
         setSuccessObj({image: logoFail, caption});
+        return null
       } else {
-        setLoggedIn(true);
-        history.push('/'); 
-        setSuccessObj({image: logoSuccess, caption: message});
+        return email ? email : token;
       }
-    // .catch(reject);
   }
   /**
    * handleSignUp - метод отправки запроса для регистрации
    * @param {{email, password}} data 
    */
   const handleSignUp = (data) => {
+    debugger;
     auth.signUp(data)
-    .then(handleAuth.bind(this, 'Вы успешно зарегистрировались!'))
+    .then(handleAuth)
+    .then( (email) => {
+      setCurrentLogin(email);
+      setLoggedIn(true);
+      setSuccessObj({image: logoSuccess, caption: 'Вы успешно зарегистрировались!'});
+    })
     .catch(reject);
   } 
   /**
    * handleSignUp - метод отправки запроса для авторизации
+   * @param {{email, password}} data 
    */
   const handleSignIn = (data) => {
     auth.signIn(data)
     // auth.checkUser({jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTM3M2JhYTg3Yzg3YjAwMWFiMzEzOGMiLCJpYXQiOjE2MzEwMjU5NjZ9.1M51wt5MYfg53RQE9Nx1g9hGotAPoNEnCi3szricZTM'})
-    .then(handleAuth.bind(this, 'Вы успешно авторизовались!'))
+    // .then( (response) => {})
+    .then( handleAuth )
+    .then( (token) => {
+      localStorage.setItem('token', token);
+      setCurrentLogin(data.email);
+      setLoggedIn(true);
+      setSuccessObj({image: logoSuccess, caption: 'Вы успешно авторизовались!'}); 
+    })
     .catch(reject);
   }
-  // обработчик нажатия ESC
+  
   React.useEffect(() => {
+
+    const jwt = localStorage.getItem('token');
+    // // Проверяем коректность токена, если он верен, перебрасываем пользователя на глявную страницу
+    if(jwt) {
+      auth.checkUser({jwt})
+      .then( handleAuth )
+      .then( (email) => {
+        // const data = result.data;
+        if(email) {
+          setLoggedIn(true);
+          setCurrentLogin(email);
+          history.push('/');
+        }
+      })
+      .catch(reject);
+    }
+
+    // обработчик нажатия ESC
     const clickEscape = (evt) => {
       if(evt.keyCode === _ESC_CODE) {
         closeAllPopups();
@@ -105,7 +137,7 @@ function App (props) {
     return () => {
       document.removeEventListener('keyup', clickEscape);
     }
-  }, []);
+  }, [history]);
   /**
    * обработчик закрытия InfoTooltip
    */
@@ -115,7 +147,6 @@ function App (props) {
   }
   // обработчик закрытия Overlay
   const closeOverlay = (evt) => {
-    debugger
     if(evt.target.parentElement.classList.contains('popup_image-tooltip')) {
       closeInfoTooltip();
     }
@@ -123,16 +154,13 @@ function App (props) {
       closeAllPopups();
     }
   }
+
   // закрытие всех popup-ов
   const closeAllPopups = () => {
     setEditAvatarPopupOpen(false);
     setEditProfilePopupOpen(false);
     setAddPlacePopupOpen(false);
     setSelectedCard(null);
-    // setSuccessObj({image: null, caption: null});
-    // closeInfoTooltip();
-    // closeInfoTooltip();
-    
   }
 
   //объявляем обновление данных по пользователю
@@ -182,9 +210,18 @@ function App (props) {
    })
    .catch(reject);
  }
+ /**
+  * Метод обрабатывает выход из учетной записи
+  */
+ const logOut = () => {
+  localStorage.removeItem('token');
+  setLoggedIn(false);
+  setCurrentLogin(null);
+ }
+
   return (
     <div className="App">
-      <Header/>
+      <Header email = {currentLogin} logOut={logOut} />
       <CurrentUserContext.Provider value={currentUser}>
       <Switch>
       

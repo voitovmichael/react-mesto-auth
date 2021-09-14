@@ -1,0 +1,16 @@
+.header__right-block {
+  display: flex;
+  align-items: baseline;
+  background: block;
+}
+
+@media screen and (max-width: 767.5px) {
+  .header__right-block {
+    display: none;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    grid-row: 1 / span 1;
+    grid-column: 1 / span 2;
+    justify-content: center;
+  }
+}

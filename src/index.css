@@ -11,8 +11,18 @@
 
 /*header*/
 @import url(./blocks/header/header.css);
+@import url(./blocks/header/_button-click/header_button-click.css);
+/* @import url(./blocks/header/_size/_small/header_size_small.css); */
 @import url(./blocks/header/__logo/header__logo.css);
+@import url(./blocks/header/__logo/_hidden/header__logo_hidden.css);
 @import url(./blocks/header/__action/header__action.css);
+@import url(./blocks/header/__action/_visible/header__action_visible.css);
+@import url(./blocks/header/__action/_color/_grey/header__action_color_grey.css);
+@import url(./blocks/header/__email/header__email.css);
+@import url(./blocks/header/__email/_visible/header__email_visible.css);
+@import url(./blocks/header/__right-block/header__right-block.css);
+@import url(./blocks/header/__right-block/_visible/header__right-block_visible.css);
+@import url(./blocks/header/__button/header__button.css);
 
 /*main*/
 @import url(./blocks/main/__profile/main__profile.css);

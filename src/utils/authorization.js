@@ -1,5 +1,4 @@
-import { token } from './constants.js';
-
+// import { token } from './constants.js';
 class Authorization {
   constructor(options) {
     this._url = options.url;

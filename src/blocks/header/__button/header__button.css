@@ -1,0 +1,22 @@
+.header__button {
+  display: none
+  /* align-items: baseline;
+  background: none; */
+}
+
+@media screen and (max-width: 767.5px) {
+  .header__button {
+    display: block;
+    height: 23px;
+    width: 24px;
+    background-image: url(../../../images/header/button-menu-background.png);
+    background-repeat: no-repeat;
+    background-color: #000;
+    border: none;
+    margin-right: 30px;
+    cursor: pointer;
+    grid-row: 2 / span 1;
+    grid-column: 2 / span 1;
+    justify-self: end;
+  }
+}
