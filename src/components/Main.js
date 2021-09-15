@@ -30,9 +30,9 @@ export default function Main (props) {
         </section>
         <section className="elements main__elements">
           <ul className="elements__list">
-          <CurrentUserContext.Provider value={currentUser}>
+          {/* <CurrentUserContext.Provider value={currentUser}> */}
             {cardsArr}
-          </CurrentUserContext.Provider>
+          {/* </CurrentUserContext.Provider> */}
           </ul>
         </section>
       </main>

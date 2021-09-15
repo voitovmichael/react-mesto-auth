@@ -20,7 +20,7 @@ function Register (props) {
       submitTitle={props.submitTitle} 
       placeholders={props.placeholders}
       onSubmit={props.onSignedUp}
-
+      isReg={props.isReg}
     />
   )
 }

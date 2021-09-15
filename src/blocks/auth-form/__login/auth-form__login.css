@@ -1,0 +1,8 @@
+.auth-form__login {
+  text-decoration: none;
+  color: #fff;
+  font-family: 'Inter', 'Courier New', Courier, monospace;
+  font-size: 14px;
+  line-height: 1.17;
+  text-align: center;
+}

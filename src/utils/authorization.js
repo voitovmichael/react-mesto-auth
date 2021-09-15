@@ -10,7 +10,8 @@ class Authorization {
    * @param {{email, password}}} data 
    * @returns Promise
    */
-  signUp ({password, email}) {
+  signUp ({email, password}) {
+    debugger;
     return fetch(`${this._url}/signup`,{
       method: 'POST',
       headers: this._headers,
@@ -24,7 +25,8 @@ class Authorization {
   /**
    * signIn метод отправки запроса авторизации
    */
-  signIn ({password, email}) {
+  signIn ({email, password}) {
+    debugger;
     return fetch(`${this._url}/signin`, {
       method: 'POST',
       headers: this._headers,
@@ -48,7 +50,11 @@ class Authorization {
     .then(this._resolve);
   }
   _resolve(response) {
-    return response.json();
+    debugger;
+    if(response.ok) {
+      return response.json();
+    }
+    return Promise.reject(`Ошибка: ${response.status}`)
   }
 }
 

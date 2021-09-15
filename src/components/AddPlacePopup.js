@@ -16,6 +16,8 @@ function AddPlacePopup (props) {
   const handleSubmit = (evt) => {
     evt.preventDefault();
     props.onAddPlace({name, link: imageLink});
+    setName('');
+    setImageLink('');
   }
   const childrenAddPlace = (
     <>

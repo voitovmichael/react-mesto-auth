@@ -22,7 +22,7 @@ function EditProfilePopup (props) {
   React.useEffect(() => {
     if(currentUser['name']) {setName(currentUser.name)};
     if(currentUser['about']) {setDescription(currentUser.about)};
-  }, [currentUser])
+  }, [currentUser, props.isOpen])
   //объявляем метод для сохранения данных по польховтелю
   const handleSubmit = (evt) => { 
     // api.changeUserInfo({name, description});

@@ -91,8 +91,7 @@
 @import url(./blocks/auth-form/auth-form.css);
 @import url(./blocks/auth-form/__title/auth-form__title.css);
 @import url(./blocks/auth-form/__input/auth-form__input.css);
-/* @import url(./blocks/auth-form/__email/auth-form__email.css);
-@import url(./blocks/auth-form/__password/auth-form__password.css); */
+@import url(./blocks/auth-form/__login/auth-form__login.css);
 @import url(./blocks/auth-form/__confirm/auth-form__confirm.css);
 
 /*tooltip*/

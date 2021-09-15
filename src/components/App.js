@@ -20,9 +20,9 @@ import logoSuccess from '../images/InfoTooltip/Success.svg';
 
 function App (props) {
 
-  const [isEditProfilePopupOpen, setEditProfilePopupOpen] = React.useState(false);
+  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setAddPlacePopupOpen] = React.useState(false);
-  const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);
+  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState({});
   const [selectedCard, setSelectedCard] = React.useState(null);
   const [cards, setCards] = React.useState([]);
@@ -33,11 +33,11 @@ function App (props) {
   const _ESC_CODE = 27;
 
   const handleEditAvatarClick = () => {
-    setEditAvatarPopupOpen(true)
+    setIsEditAvatarPopupOpen(true)
   }
 
   const handleEditProfileClick = () => {
-    setEditProfilePopupOpen(true);
+    setIsEditProfilePopupOpen(true);
   }
 
   // обработчик открытия popup-a добавления карточки
@@ -72,7 +72,6 @@ function App (props) {
    * @param {{email, password}} data 
    */
   const handleSignUp = (data) => {
-    debugger;
     auth.signUp(data)
     .then(handleAuth)
     .then( (email) => {
@@ -99,7 +98,14 @@ function App (props) {
     })
     .catch(reject);
   }
-  
+
+  // обработчик нажатия ESC
+  const clickEscape = (evt) => {
+  if(evt.keyCode === _ESC_CODE) {
+    closeAllPopups();
+    }
+  };
+
   React.useEffect(() => {
 
     const jwt = localStorage.getItem('token');
@@ -118,26 +124,18 @@ function App (props) {
       .catch(reject);
     }
 
-    // обработчик нажатия ESC
-    const clickEscape = (evt) => {
-      if(evt.keyCode === _ESC_CODE) {
-        closeAllPopups();
-      }
-    }
-
-    document.addEventListener('keyup', clickEscape);
-    
     //делаем запрос данных текщего пользователя через API
     Promise.all([api.getUserInfo(), api.getCards()])
     .then(([userInfo, cardsList]) => {
       setCurrentUser(userInfo);
       setCards(cardsList);
     })
-    .catch(reject)
+    .catch(reject);
+    document.addEventListener('keyup', clickEscape);
     return () => {
       document.removeEventListener('keyup', clickEscape);
     }
-  }, [history]);
+  }, [history, loggedIn]);
   /**
    * обработчик закрытия InfoTooltip
    */
@@ -147,20 +145,18 @@ function App (props) {
   }
   // обработчик закрытия Overlay
   const closeOverlay = (evt) => {
-    if(evt.target.parentElement.classList.contains('popup_image-tooltip')) {
-      closeInfoTooltip();
-    }
-    else if(evt.target.classList.contains('popup') || evt.target.classList.contains('popup__close-button')) {
+    if(evt.target.classList.contains('popup') || evt.target.classList.contains('popup__close-button')) {
       closeAllPopups();
     }
   }
 
   // закрытие всех popup-ов
   const closeAllPopups = () => {
-    setEditAvatarPopupOpen(false);
-    setEditProfilePopupOpen(false);
+    setIsEditAvatarPopupOpen(false);
+    setIsEditProfilePopupOpen(false);
     setAddPlacePopupOpen(false);
     setSelectedCard(null);
+    closeInfoTooltip();
   }
 
   //объявляем обновление данных по пользователю
@@ -170,7 +166,8 @@ function App (props) {
       .then((userInfo) => {
         setCurrentUser(userInfo);
         closeAllPopups();
-      });
+      })
+      .catch(reject);
     }
   }
   //Обновляем аватар
@@ -181,6 +178,7 @@ function App (props) {
         setCurrentUser(response);
         closeAllPopups();
       })
+      .catch(reject);
     }
   }
   const handleAddPlace = ({name, link}) => {
@@ -223,41 +221,42 @@ function App (props) {
     <div className="App">
       <Header email = {currentLogin} logOut={logOut} />
       <CurrentUserContext.Provider value={currentUser}>
-      <Switch>
-      
-      <Route path="/sign-up">
-        <Register title="Регистрация" submitTitle="Зарегистрироваться" placeholders={['Email', 'Пароль']} 
-        onSignedUp={handleSignUp}
-        />
-        <InfoTooltip succsessObj={succsessObj} onClose={closeOverlay} />
-      </Route>
-      <Route path="/sign-in">
-        <Login title="Вход" submitTitle="Войти" placeholders={['Email', 'Пароль']}
-          onSignedIn={handleSignIn}
-        />
-        <InfoTooltip succsessObj={succsessObj} onClose={closeOverlay} />
-      </Route>
+        <Switch>
+        
+        <Route path="/sign-up">
+          <Register title="Регистрация" submitTitle="Зарегистрироваться" placeholders={['Email', 'Пароль']} 
+          onSignedUp={handleSignUp} isReg={true}
+          />
+          
+        </Route>
+        <Route path="/sign-in">
+          <Login title="Вход" submitTitle="Войти" placeholders={['Email', 'Пароль']}
+            onSignedIn={handleSignIn}
+          />
+          {/* <InfoTooltip succsessObj={succsessObj} onClose={closeOverlay} /> */}
+        </Route>
 
-      <ProtectedRoute
-            loggedIn={loggedIn}
-            path="/"
-            component={Main}
-            onEditProfile={handleEditProfileClick}
-            onAddPlace={handleAddPlaceClick}
-            onEditAvatar={handleEditAvatarClick}
-            onCardClick={handleCardClick}
-            cards={cards}
-            onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}> 
-        </ProtectedRoute>
-      
-        <Footer/>
+        <ProtectedRoute
+              loggedIn={loggedIn}
+              path="/"
+              component={Main}
+              onEditProfile={handleEditProfileClick}
+              onAddPlace={handleAddPlaceClick}
+              onEditAvatar={handleEditAvatarClick}
+              onCardClick={handleCardClick}
+              cards={cards}
+              onCardLike={handleCardLike}
+              onCardDelete={handleCardDelete}> 
+          </ProtectedRoute>
+        
+          <Footer/>
 
-      </Switch>
-      <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeOverlay} onUpdateUser={handleUpdateUser}/>
-          <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeOverlay} onAddPlace={handleAddPlace}/>
-          <ImagePopup card={selectedCard} onClose={closeOverlay} />
-          <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeOverlay} onUpdateAvatar={handleUpdateAvatar} />
+        </Switch>
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeOverlay} onUpdateUser={handleUpdateUser}/>
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeOverlay} onAddPlace={handleAddPlace}/>
+        <ImagePopup card={selectedCard} onClose={closeOverlay} />
+        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeOverlay} onUpdateAvatar={handleUpdateAvatar} />
+        <InfoTooltip succsessObj={succsessObj} onClose={closeOverlay} />
       </CurrentUserContext.Provider>
     </div>
   );
