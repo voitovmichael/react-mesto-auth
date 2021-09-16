@@ -79,7 +79,10 @@ function App (props) {
       setLoggedIn(true);
       setSuccessObj({image: logoSuccess, caption: 'Вы успешно зарегистрировались!'});
     })
-    .catch(reject);
+    .catch( ( response ) => {
+      reject(response);
+      setSuccessObj({image: logoFail, caption: 'Что-то пошло не так! Попробуйте ещё раз.'});
+    });
   } 
   /**
    * handleSignUp - метод отправки запроса для авторизации
@@ -87,8 +90,6 @@ function App (props) {
    */
   const handleSignIn = (data) => {
     auth.signIn(data)
-    // auth.checkUser({jwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTM3M2JhYTg3Yzg3YjAwMWFiMzEzOGMiLCJpYXQiOjE2MzEwMjU5NjZ9.1M51wt5MYfg53RQE9Nx1g9hGotAPoNEnCi3szricZTM'})
-    // .then( (response) => {})
     .then( handleAuth )
     .then( (token) => {
       localStorage.setItem('token', token);
@@ -96,7 +97,10 @@ function App (props) {
       setLoggedIn(true);
       setSuccessObj({image: logoSuccess, caption: 'Вы успешно авторизовались!'}); 
     })
-    .catch(reject);
+    .catch( ( response ) => {
+      reject(response);
+      setSuccessObj({image: logoFail, caption: 'Что-то пошло не так! Попробуйте ещё раз.'});
+    });
   }
 
   // обработчик нажатия ESC
@@ -233,7 +237,6 @@ function App (props) {
           <Login title="Вход" submitTitle="Войти" placeholders={['Email', 'Пароль']}
             onSignedIn={handleSignIn}
           />
-          {/* <InfoTooltip succsessObj={succsessObj} onClose={closeOverlay} /> */}
         </Route>
 
         <ProtectedRoute

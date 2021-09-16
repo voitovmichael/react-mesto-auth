@@ -1,8 +1,6 @@
 import React from 'react';
-// import { currentUser } from "../contexts/CardContext.js";//
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 function Card (props){
-  // const card = React.useContext(CardContext);
   const currentUser = React.useContext(CurrentUserContext)
   const handleClick = () => {
     props.onCardClick(props.card)
@@ -14,7 +12,7 @@ function Card (props){
     props.onCardDelete(props.card)
   }
   const isOwn = props.card.owner._id === currentUser._id;
-  const isLike = props.card.likes.length > 0;
+  const isLike = props.card.likes.some((like) => like._id === currentUser._id)
   return (
         <li className="element">
           <div className={`element__delete ${isOwn ? 'element__delete_active' : ''}`}>

@@ -1,4 +1,3 @@
-// import { token } from './constants.js';
 class Authorization {
   constructor(options) {
     this._url = options.url;
@@ -11,7 +10,6 @@ class Authorization {
    * @returns Promise
    */
   signUp ({email, password}) {
-    debugger;
     return fetch(`${this._url}/signup`,{
       method: 'POST',
       headers: this._headers,
@@ -26,7 +24,6 @@ class Authorization {
    * signIn метод отправки запроса авторизации
    */
   signIn ({email, password}) {
-    debugger;
     return fetch(`${this._url}/signin`, {
       method: 'POST',
       headers: this._headers,
@@ -50,7 +47,6 @@ class Authorization {
     .then(this._resolve);
   }
   _resolve(response) {
-    debugger;
     if(response.ok) {
       return response.json();
     }
@@ -59,7 +55,6 @@ class Authorization {
 }
 
 const auth = new Authorization({url: 'https://auth.nomoreparties.co', headers: {
-  // authorization: token,
   "Content-Type": "application/json" 
   }
 }, 'test');
